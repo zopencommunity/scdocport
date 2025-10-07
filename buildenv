@@ -1,7 +1,7 @@
 # Update bump details accordingly. Use bump check to confirm.
-# bump: scdoc-version /SCDOC_VERSION="(.*)"/ https://git.sr.ht/~sircmpwn/scdoc|semver:*
-# SCDOC_VERSION="V.R.M" # Specify a stable release
-# export ZOPEN_STABLE_TAG="v${SCDOC_VERSION}"
+# bump: scdoc-version /SCDOC_VERSION="(.*)"/ https://git.sr.ht/~sircmpwn/scdoc/refs|re:/href=".*?([\d.]+).tar.gz"/$1/|semver:*
+SCDOC_VERSION="1.11.3" # Specify a stable release
+export ZOPEN_STABLE_TAG="${SCDOC_VERSION}"
 
 ###
 ### Build control file for the scdoc port
@@ -12,11 +12,10 @@
 ###
 
 ## Specify the default build line, either 'DEV' or 'STABLE' (default: STABLE)
-export ZOPEN_BUILD_LINE="DEV"
-export ZOPEN_DEV_TYPE="GIT"
+export ZOPEN_BUILD_LINE="STABLE"
 ## Required IF ZOPEN_BUILD_LINE='STABLE'
-export ZOPEN_STABLE_URL="https://git.sr.ht/~sircmpwn/scdoc"  # Specify the stable build URL (either git or tarball)
-export ZOPEN_STABLE_DEPS="zoslib make coreutils" # Specify the stable build dependencies.
+export ZOPEN_STABLE_URL="https://git.sr.ht/~sircmpwn/scdoc/archive/${SCDOC_VERSION}.tar.gz"  # Specify the stable build URL (either git or tarball)
+export ZOPEN_STABLE_DEPS="zoslib make coreutils grep" # Specify the stable build dependencies.
 
 ## Required IF ZOPEN_BUILD_LINE='DEV'
 export ZOPEN_DEV_URL="https://git.sr.ht/~sircmpwn/scdoc"   # Specify the dev build URL
@@ -32,7 +31,6 @@ export ZOPEN_RUNTIME_DEPS=""
 ## Runtime system prerequisites; supply the name of the system pre-requisties.
 ## Current available prerequisites: zos24 zos25 zos31 procfs (see https://github.com/zopencommunity/meta/blob/main/include/prereq.sh for a current list)
 export ZOPEN_SYSTEM_PREREQ=""
-
 
 ###
 ### Build stage control environment variables
@@ -55,19 +53,22 @@ zopen_check_results()
   dir="$1"
   pfx="$2"
   chk="$1/$2_check.log"
+  
+  actualFailures=$(grep -c 'FAIL' $chk)
+  totalTests=$(grep -E -c 'OK|FAIL' $chk)
 
   # Echo the following information to gauge build health
-  echo "actualFailures:0"
-  echo "totalTests:1"
+  echo "actualFailures:$actualFailures"
+  echo "totalTests:$totalTests"
   echo "expectedFailures:0"
-  echo "expectedTotalTests:1"
+  echo "expectedTotalTests:$totalTests"
 }
 
 zopen_get_version()
 {
   # Modify to echo the version of your tool/library
   # Rather than hardcoding the version, obtain the version by running the tool/library
-  echo "1.0.0"
+  echo $SCDOC_VERSION
 }
 
 
