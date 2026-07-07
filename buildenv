@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: scdoc-version /SCDOC_VERSION="(.*)"/ https://git.sr.ht/~sircmpwn/scdoc/refs|re:/href=".*?([\d.]+).tar.gz"/$1/|semver:*
-SCDOC_VERSION="1.11.4" # Specify a stable release
+SCDOC_VERSION="1.11.5" # Specify a stable release
 export ZOPEN_STABLE_TAG="${SCDOC_VERSION}"
 
 ###
